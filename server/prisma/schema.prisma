@@ -13,3 +13,31 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id Int @id @default(autoincrement())
+  name String 
+  rollNumber String @unique
+  email String @unique
+  phone String @unique
+  subscriptions Subscriptions[]
+}
+
+model Plan {
+  id Int @id @default(autoincrement())
+  name String
+  duration Int  //In days - 30 for Monthly, 90 for 3 Months
+  price Float
+  subscriptions Subscriptions[]
+}
+
+model Subscriptions {
+  id Int @id @default(autoincrement())
+  userId Int
+  planId Int
+  startDate DateTime
+  endDate DateTime
+  paymentStatus String @default("unpaid")
+  user User @relation(fields: [userId], references: [id])
+  plan Plan @relation(fields: [planId], references: [id])
+}
