@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  output   = "../generated/prisma" // Custom output directory
 }
 
 datasource db {
@@ -20,13 +20,18 @@ model User {
   rollNumber String @unique
   email String @unique
   phone String @unique
+  password String
+  role String @default("user") // user, admin, trainer
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   subscriptions Subscriptions[]
 }
 
 model Plan {
   id Int @id @default(autoincrement())
   name String
-  duration Int  //In days - 30 for Monthly, 90 for 3 Months
+  duration Int  @unique//In days - 30 for Monthly, 90 for 3 Months
   price Float
   subscriptions Subscriptions[]
 }
