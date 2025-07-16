@@ -12,5 +12,5 @@ const createRateLimiter = (windowMs, max, message) => {
 
 module.exports = {
     general: createRateLimiter(15 * 60 * 1000, 100, 'Too many requests'),
-    auth: createRateLimiter(15 * 60 * 1000, 5, 'Too many login attempts')
+    auth: createRateLimiter(15 * 60 * 1000, 20, 'Too many login attempts') // Increased from 5 to 20
 };

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Storage - Gym Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2563eb;
+        }
+        .success {
+            color: #059669;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏋️ Gym Management - Storage Cleanup</h1>
+        <p>If you're experiencing JSON parsing errors, click the button below to clear corrupted localStorage data:</p>
+        
+        <button onclick="clearStorage()">Clear localStorage & Reload</button>
+        
+        <div id="result" style="margin-top: 20px;"></div>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h3>Manual Instructions:</h3>
+        <ol>
+            <li>Open your browser's Developer Tools (F12)</li>
+            <li>Go to the Console tab</li>
+            <li>Type: <code>localStorage.clear()</code></li>
+            <li>Press Enter</li>
+            <li>Refresh the page</li>
+        </ol>
+    </div>
+
+    <script>
+        function clearStorage() {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                document.getElementById('result').innerHTML = '<p class="success">✅ Storage cleared successfully!</p><p>Redirecting to main app...</p>';
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<p style="color: red;">❌ Error clearing storage: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

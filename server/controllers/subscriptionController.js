@@ -122,6 +122,62 @@ const getSubscriptionsByPlan = asyncHandler(async (req, res) => {
     res.json(subscriptions);
 });
 
+// Check subscription by roll number
+const checkSubscription = asyncHandler(async (req, res) => {
+    const { roll } = req.query;
+    
+    if (!roll) {
+        return res.status(400).json({ error: 'Roll number is required' });
+    }
+
+    // Find user by roll number
+    const user = await prisma.user.findUnique({
+        where: { rollNumber: roll },
+        include: {
+            subscriptions: {
+                include: {
+                    plan: true
+                },
+                orderBy: {
+                    endDate: 'desc'
+                },
+                take: 1
+            }
+        }
+    });
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (!user.subscriptions || user.subscriptions.length === 0) {
+        return res.status(404).json({ error: 'No subscription found for this user' });
+    }
+
+    const subscription = user.subscriptions[0];
+    const currentDate = new Date();
+    const endDate = new Date(subscription.endDate);
+    
+    let status = 'active';
+    if (endDate < currentDate) {
+        status = 'expired';
+    } else if ((endDate - currentDate) / (1000 * 60 * 60 * 24) <= 7) {
+        status = 'expiring_soon';
+    }
+
+    res.json({
+        user: {
+            name: user.name,
+            rollNumber: user.rollNumber,
+            email: user.email
+        },
+        subscription: {
+            ...subscription,
+            status
+        }
+    });
+});
+
 module.exports = {
     getAllSubscriptions,
     createSubscription,
@@ -130,5 +186,6 @@ module.exports = {
     deleteSubscription,
     getSubscriptionsByUser,
     getSubscriptionsByPlan,
+    checkSubscription,
     handleValidationErrors
 };

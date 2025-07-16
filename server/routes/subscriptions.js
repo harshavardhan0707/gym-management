@@ -15,6 +15,7 @@ const {
     deleteSubscription,
     getSubscriptionsByUser,
     getSubscriptionsByPlan,
+    checkSubscription, // Add this import
     handleValidationErrors
 } = require('../controllers/subscriptionController');
 
@@ -24,6 +25,7 @@ const router = express.Router();
 router.use(auth);
 
 // Routes
+router.get('/check', checkSubscription); // Add this route before other parameterized routes
 router.get('/', getAllSubscriptions);
 router.post('/', validateSubscriptions, handleValidationErrors, createSubscription);
 router.get('/:id', validateSubscriptionsId, handleValidationErrors, getSubscriptionById);
