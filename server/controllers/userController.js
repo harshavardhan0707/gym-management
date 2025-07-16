@@ -87,6 +87,9 @@ const getUserById = asyncHandler(async (req, res) => {
 // Create a new user
 const createUser = asyncHandler(async (req, res) => {
     const { name, email, phone, rollNumber, password, subscription } = req.body;
+    if (!password || typeof password !== 'string' || password.length < 6) {
+        return res.status(400).json({ error: 'Password is required and must be at least 6 characters.' });
+    }
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
@@ -130,21 +133,20 @@ const createUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body };
-    
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
         where: { rollNumber: id }
     });
-    
     if (!existingUser) {
         return res.status(404).json({ error: 'User not found' });
     }
-    
     // Hash password if provided
     if (updateData.password) {
+        if (typeof updateData.password !== 'string' || updateData.password.length < 6) {
+            return res.status(400).json({ error: 'Password must be at least 6 characters.' });
+        }
         updateData.password = await bcrypt.hash(updateData.password, 12);
     }
-    
     const user = await prisma.user.update({
         where: { rollNumber: id },
         data: updateData,
@@ -156,7 +158,6 @@ const updateUser = asyncHandler(async (req, res) => {
             phone: true
         }
     });
-    
     res.json({
         message: 'User updated successfully',
         user
@@ -166,20 +167,16 @@ const updateUser = asyncHandler(async (req, res) => {
 // Delete user
 const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
         where: { rollNumber: id }
     });
-    
     if (!existingUser) {
         return res.status(404).json({ error: 'User not found' });
     }
-    
     await prisma.user.delete({
         where: { rollNumber: id }
     });
-    
     res.json({ 
         message: 'User deleted successfully',
         rollNumber: id

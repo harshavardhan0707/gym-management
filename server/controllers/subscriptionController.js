@@ -39,18 +39,19 @@ const getAllSubscriptions = asyncHandler(async (req, res) => {
 
 // Create a new subscription
 const createSubscription = asyncHandler(async (req, res) => {
-    const { userId, planId, startDate, endDate, status } = req.body;
-
+    const { userId, planId, startDate, endDate, paymentStatus } = req.body;
+    if (!paymentStatus || typeof paymentStatus !== 'string') {
+        return res.status(400).json({ error: 'paymentStatus is required and must be a string.' });
+    }
     const newSubscription = await prisma.subscriptions.create({
         data: {
             userId,
             planId,
             startDate: new Date(startDate),
             endDate: new Date(endDate),
-            status
+            paymentStatus
         }
     });
-
     res.status(201).json(newSubscription);
 });
 
@@ -69,7 +70,10 @@ const getSubscriptionById = asyncHandler(async (req, res) => {
 // Update a subscription by ID
 const updateSubscription = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { userId, planId, startDate, endDate, status } = req.body;
+    const { userId, planId, startDate, endDate, paymentStatus } = req.body;
+    if (paymentStatus && typeof paymentStatus !== 'string') {
+        return res.status(400).json({ error: 'paymentStatus must be a string.' });
+    }
     const updatedSubscription = await prisma.subscriptions.update({
         where: { id: parseInt(id) },
         data: {
@@ -77,7 +81,7 @@ const updateSubscription = asyncHandler(async (req, res) => {
             planId,
             startDate: startDate ? new Date(startDate) : undefined,
             endDate: endDate ? new Date(endDate) : undefined,
-            status
+            paymentStatus
         }
     });
     res.json(updatedSubscription);

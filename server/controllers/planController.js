@@ -39,14 +39,13 @@ const getAllPlans = asyncHandler(async (req, res) => {
 
 // Create a new plan
 const createPlan = asyncHandler(async (req, res) => {
-    const { name, duration, price, description } = req.body;
+    const { name, duration, price } = req.body;
 
     const newPlan = await prisma.plan.create({
         data: {
             name,
             duration,
-            price,
-            description
+            price
         }
     });
 
@@ -68,15 +67,14 @@ const getPlanById = asyncHandler(async (req, res) => {
 // Update a plan by ID
 const updatePlan = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { name, duration, price, description } = req.body;
+    const { name, duration, price } = req.body;
 
     const updatedPlan = await prisma.plan.update({
         where: { id },
         data: {
             name,
             duration,
-            price,
-            description
+            price
         }
     });
 

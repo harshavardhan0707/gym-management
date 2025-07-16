@@ -23,7 +23,9 @@ exports.login = async (req, res) => {
         }
 
         const token = jwt.sign({ userId: admin.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-        res.json({ token });
+        // Remove password from admin object
+        const { password: _pw, ...adminSafe } = admin;
+        res.json({ token, admin: adminSafe });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Internal server error' });

@@ -21,11 +21,13 @@ const {
 
 const router = express.Router();
 
-// Apply authentication to all routes
+// Make /check public
+router.get('/check', checkSubscription); // Public route
+
+// Apply authentication to all other routes
 router.use(auth);
 
 // Routes
-router.get('/check', checkSubscription); // Add this route before other parameterized routes
 router.get('/', getAllSubscriptions);
 router.post('/', validateSubscriptions, handleValidationErrors, createSubscription);
 router.get('/:id', validateSubscriptionsId, handleValidationErrors, getSubscriptionById);
