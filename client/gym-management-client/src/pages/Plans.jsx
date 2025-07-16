@@ -89,9 +89,9 @@ const Plans = () => {
     });
   };
 
-  const filteredPlans = plans.filter(plan =>
+  const filteredPlans = Array.isArray(plans) ? plans.filter(plan =>
     plan.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) : [];
 
   return (
     <div className="space-y-6">
@@ -152,7 +152,7 @@ const Plans = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredPlans.map((plan) => (
+                  {Array.isArray(filteredPlans) && filteredPlans.map((plan) => (
                     <tr key={plan.id} className="border-b hover:bg-muted/50">
                       <td className="p-2">
                         <div>

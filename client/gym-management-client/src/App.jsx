@@ -10,6 +10,7 @@ import SimpleMembers from './pages/SimpleMembers';
 import Plans from './pages/Plans';
 import Subscriptions from './pages/Subscriptions';
 import CheckSubscription from './pages/CheckSubscription';
+import Dashboard from './pages/Dashboard';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -42,7 +43,7 @@ const App = () => {
             <Route path="/" element={<SimpleLogin />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
-                <SimpleDashboard />
+                <Dashboard />
               </ProtectedRoute>
             } />
             <Route path="/members" element={

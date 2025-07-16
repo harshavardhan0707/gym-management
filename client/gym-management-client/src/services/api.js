@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api'; // Changed to port 5000
+// Use environment variable for API base URL, fallback to localhost
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -37,17 +38,22 @@ export const getUsers = async (page = 1, limit = 10) => {
 };
 
 export const createUser = async (userData) => {
-  const response = await api.post('/users', userData);
+  // Ensure password is present and valid
+  const dataToSend = { ...userData };
+  if (!dataToSend.password || typeof dataToSend.password !== 'string' || dataToSend.password.length < 6) {
+    dataToSend.password = 'changeme123'; // Default password, should be changed by user
+  }
+  const response = await api.post('/users', dataToSend);
   return response.data;
 };
 
-export const updateUser = async (id, userData) => {
-  const response = await api.put(`/users/${id}`, userData);
+export const updateUser = async (rollNumber, userData) => {
+  const response = await api.put(`/users/${rollNumber}`, userData);
   return response.data;
 };
 
-export const deleteUser = async (id) => {
-  const response = await api.delete(`/users/${id}`);
+export const deleteUser = async (rollNumber) => {
+  const response = await api.delete(`/users/${rollNumber}`);
   return response.data;
 };
 

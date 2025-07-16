@@ -4,8 +4,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import { getUsers, getPlans, getSubscriptions } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+
+console.log('DEBUG: Card:', Card);
+console.log('DEBUG: CardHeader:', CardHeader);
+console.log('DEBUG: CardContent:', CardContent);
+console.log('DEBUG: CardTitle:', CardTitle);
+console.log('DEBUG: Button:', Button);
+console.log('DEBUG: Badge:', Badge);
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
   console.log('Dashboard component rendering');
   
   const [stats, setStats] = useState({
@@ -26,9 +42,9 @@ const Dashboard = () => {
           getSubscriptions()
         ]);
 
-        const users = usersRes.users || [];
-        const plans = plansRes.plans || [];
-        const subscriptions = subscriptionsRes.subscriptions || [];
+        const users = Array.isArray(usersRes?.data) ? usersRes.data : [];
+        const plans = Array.isArray(plansRes?.data) ? plansRes.data : [];
+        const subscriptions = Array.isArray(subscriptionsRes?.data) ? subscriptionsRes.data : [];
 
         const activeSubscriptions = subscriptions.filter(sub => {
           const endDate = new Date(sub.endDate);
@@ -46,6 +62,7 @@ const Dashboard = () => {
         setRecentMembers(users.slice(-5).reverse());
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        setRecentMembers([]);
       } finally {
         setLoading(false);
       }
@@ -54,6 +71,7 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
+  // Defensive: always use array for statCards and recentMembers
   const statCards = [
     {
       title: "Total Members",
@@ -110,7 +128,7 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((stat, index) => (
+        {Array.isArray(statCards) && statCards.map((stat, index) => (
           <Card key={index} className="bg-gradient-card border-0 shadow-md hover:shadow-lg transition-all duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -139,7 +157,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {recentMembers.length > 0 ? (
+              {Array.isArray(recentMembers) && recentMembers.length > 0 ? (
                 recentMembers.map((member, index) => (
                   <div key={index} className="flex items-center justify-between py-2 border-b last:border-b-0">
                     <div>

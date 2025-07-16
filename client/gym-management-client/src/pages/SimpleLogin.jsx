@@ -21,9 +21,10 @@ const SimpleLogin = () => {
       console.log('Login response:', response);
       
       if (response && response.token) {
-        login(response.token, response.admin || { name: 'Admin' });
-        toast.success('Login successful!');
-        navigate('/dashboard', { replace: true });
+        login(response.token, response.admin || { name: 'Admin' }, () => {
+          toast.success('Login successful!');
+          navigate('/dashboard', { replace: true });
+        });
       } else {
         throw new Error('Invalid response format');
       }

@@ -25,11 +25,12 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (token, userData) => {
+  const login = (token, userData, callback) => {
     localStorage.setItem('token', token);
     safeLocalStorage.set('user', userData);
     setIsAuthenticated(true);
     setUser(userData);
+    if (callback) callback();
   };
 
   const logout = () => {

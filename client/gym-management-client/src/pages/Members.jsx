@@ -17,7 +17,8 @@ const Members = () => {
     name: '',
     email: '',
     phone: '',
-    rollNumber: ''
+    rollNumber: '',
+    password: '' // Add password field
   });
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const Members = () => {
   const fetchMembers = async () => {
     try {
       const response = await getUsers(1, 1000);
-      setMembers(response.users || []);
+      setMembers(response.data || []);
     } catch (error) {
       toast.error('Failed to fetch members');
     } finally {
@@ -39,10 +40,10 @@ const Members = () => {
     e.preventDefault();
     try {
       if (editingMember) {
-        await updateUser(editingMember.id, formData);
+        await updateUser(editingMember.rollNumber, formData); // Use rollNumber
         toast.success('Member updated successfully');
       } else {
-        await createUser(formData);
+        await createUser(formData); // Password will be handled in API
         toast.success('Member created successfully');
       }
       setShowForm(false);
@@ -65,10 +66,10 @@ const Members = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (memberId) => {
+  const handleDelete = async (memberRollNumber) => {
     if (window.confirm('Are you sure you want to delete this member?')) {
       try {
-        await deleteUser(memberId);
+        await deleteUser(memberRollNumber); // Use rollNumber
         toast.success('Member deleted successfully');
         fetchMembers();
       } catch (error) {
@@ -82,15 +83,16 @@ const Members = () => {
       name: '',
       email: '',
       phone: '',
-      rollNumber: ''
+      rollNumber: '',
+      password: ''
     });
   };
 
-  const filteredMembers = members.filter(member =>
+  const filteredMembers = Array.isArray(members) ? members.filter(member =>
     member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     member.rollNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) : [];
 
   return (
     <div className="space-y-6">
@@ -152,7 +154,7 @@ const Members = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredMembers.map((member) => (
+                  {Array.isArray(filteredMembers) && filteredMembers.map((member) => (
                     <tr key={member.id} className="border-b hover:bg-muted/50">
                       <td className="p-2">
                         <div>
@@ -176,7 +178,7 @@ const Members = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleDelete(member.id)}
+                            onClick={() => handleDelete(member.rollNumber)}
                             className="text-destructive hover:text-destructive"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -234,6 +236,15 @@ const Members = () => {
                     value={formData.rollNumber}
                     onChange={(e) => setFormData({ ...formData, rollNumber: e.target.value })}
                     required
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Password</label>
+                  <Input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder={editingMember ? "Leave blank to keep current password" : "Set a password"}
                   />
                 </div>
                 <div className="flex gap-2 pt-4">

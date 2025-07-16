@@ -33,7 +33,6 @@ const Subscriptions = () => {
         getUsers(1, 1000),
         getPlans()
       ]);
-      
       setSubscriptions(subscriptionsRes.data || []);
       setUsers(usersRes.data || []);
       setPlans(plansRes.data || []);
@@ -111,15 +110,15 @@ const Subscriptions = () => {
     return { status: 'active', variant: 'success' };
   };
 
-  const filteredSubscriptions = subscriptions.filter(subscription => {
-    const user = users.find(u => u.id === subscription.userId);
-    const plan = plans.find(p => p.id === subscription.planId);
+  const filteredSubscriptions = Array.isArray(subscriptions) ? subscriptions.filter(subscription => {
+    const user = Array.isArray(users) ? users.find(u => u.id === subscription.userId) : undefined;
+    const plan = Array.isArray(plans) ? plans.find(p => p.id === subscription.planId) : undefined;
     return (
-      user?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      subscription.paymentStatus.toLowerCase().includes(searchTerm.toLowerCase())
+      (user?.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (plan?.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (subscription.paymentStatus || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
-  });
+  }) : [];
 
   return (
     <div className="space-y-6">
@@ -183,9 +182,9 @@ const Subscriptions = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredSubscriptions.map((subscription) => {
-                    const user = users.find(u => u.id === subscription.userId);
-                    const plan = plans.find(p => p.id === subscription.planId);
+                  {Array.isArray(filteredSubscriptions) && filteredSubscriptions.map((subscription) => {
+                    const user = Array.isArray(users) ? users.find(u => u.id === subscription.userId) : undefined;
+                    const plan = Array.isArray(plans) ? plans.find(p => p.id === subscription.planId) : undefined;
                     const status = getSubscriptionStatus(subscription.endDate);
                     
                     return (
@@ -269,7 +268,7 @@ const Subscriptions = () => {
                     required
                   >
                     <option value="">Select a member</option>
-                    {users.map(user => (
+                    {Array.isArray(users) && users.map(user => (
                       <option key={user.id} value={user.id}>
                         {user.name} ({user.rollNumber})
                       </option>
@@ -285,7 +284,7 @@ const Subscriptions = () => {
                     required
                   >
                     <option value="">Select a plan</option>
-                    {plans.map(plan => (
+                    {Array.isArray(plans) && plans.map(plan => (
                       <option key={plan.id} value={plan.id}>
                         {plan.name} - ${plan.price} ({plan.duration} days)
                       </option>
