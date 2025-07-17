@@ -30,10 +30,6 @@ app.use(helmet({
 const logFormat = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
 app.use(morgan(logFormat));
 
-// Rate limiting
-app.use('/api/', rateLimiter.general);
-app.use('/api/auth', rateLimiter.auth);
-
 // CORS configuration
 const corsOptions = {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
@@ -41,6 +37,12 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
+
+// Rate limiting
+app.use('/api/', rateLimiter.general);
+app.use('/api/auth', rateLimiter.auth);
+
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({extended: false, limit: '10mb'}));
 
