@@ -73,6 +73,11 @@ const SubscriptionFormModal = ({
       endDate: form.endDate,
       paymentStatus: form.paymentStatus,
     };
+    
+    // Debug logging
+    console.log('Form data being submitted:', data);
+    console.log('Form state:', form);
+    
     onSubmit(data);
   };
 

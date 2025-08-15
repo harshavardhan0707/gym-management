@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+// Brand dumbbell icon
+import dumbbellIcon from "../favicons/web/icons8-dumbell-lineal-color-32.png";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -30,6 +32,12 @@ const Navbar = () => {
     <header className="sticky top-0 z-40 bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 shadow-lg border-b border-blue-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <div className="flex items-center gap-2">
+          <img
+            src={dumbbellIcon}
+            alt="Dumbbell"
+            className="h-8 w-8 drop-shadow-sm select-none"
+            draggable={false}
+          />
           <span className="text-2xl font-extrabold text-white tracking-tight select-none drop-shadow">FitAdmin</span>
         </div>
         <div className="flex items-center gap-4 relative" ref={dropdownRef}>

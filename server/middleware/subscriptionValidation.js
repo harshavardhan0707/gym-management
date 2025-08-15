@@ -6,7 +6,7 @@ const validateSubscriptions = [
     body('planId').isInt().withMessage('Plan ID must be an integer'),
     body('startDate').isISO8601().withMessage('Start date must be a valid date'),
     body('endDate').isISO8601().withMessage('End date must be a valid date'),
-    body('status').isIn(['active', 'inactive']).withMessage('Status must be either active or inactive')
+    body('paymentStatus').isIn(['paid', 'unpaid', 'active', 'inactive', 'expired', 'expiring_soon']).withMessage('Payment status must be a valid status')
 ];
 
 const validateSubscriptionsUpdate = [
@@ -14,7 +14,7 @@ const validateSubscriptionsUpdate = [
     body('planId').optional().isInt(),
     body('startDate').optional().isISO8601(),
     body('endDate').optional().isISO8601(),
-    body('status').optional().isIn(['active', 'inactive'])
+    body('paymentStatus').optional().isIn(['paid', 'unpaid', 'active', 'inactive', 'expired', 'expiring_soon'])
 ];
 
 const validateSubscriptionsId = [

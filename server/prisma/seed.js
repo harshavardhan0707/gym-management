@@ -93,24 +93,41 @@ async function main() {
   const john = await prisma.user.findUnique({ where: { email: 'john.doe@example.com' } });
   const jane = await prisma.user.findUnique({ where: { email: 'jane.smith@example.com' } });
 
-  await prisma.subscriptions.createMany({
-    data: [
-      {
+  // Create subscriptions (unique constraint will prevent duplicates)
+  await prisma.subscriptions.upsert({
+    where: { 
+      userId_planId_startDate: {
         userId: john.id,
         planId: plan30.id,
-        startDate: new Date('2025-07-01'),
-        endDate: new Date('2025-07-31'),
-        paymentStatus: 'paid',
-      },
-      {
+        startDate: new Date('2025-07-01')
+      }
+    },
+    update: {},
+    create: {
+      userId: john.id,
+      planId: plan30.id,
+      startDate: new Date('2025-07-01'),
+      endDate: new Date('2025-07-31'),
+      paymentStatus: 'paid',
+    },
+  });
+
+  await prisma.subscriptions.upsert({
+    where: { 
+      userId_planId_startDate: {
         userId: jane.id,
         planId: plan90.id,
-        startDate: new Date('2025-06-15'),
-        endDate: new Date('2025-09-13'),
-        paymentStatus: 'unpaid',
-      },
-    ],
-    skipDuplicates: true,
+        startDate: new Date('2025-06-15')
+      }
+    },
+    update: {},
+    create: {
+      userId: jane.id,
+      planId: plan90.id,
+      startDate: new Date('2025-06-15'),
+      endDate: new Date('2025-09-13'),
+      paymentStatus: 'unpaid',
+    },
   });
 
   console.log('Seeded admin, users, plans, and subscriptions');

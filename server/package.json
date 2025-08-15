@@ -11,12 +11,18 @@
     "generate": "npx prisma generate",
     "studio": "npx prisma studio"
   },
-  "keywords": ["gym", "management", "api", "nodejs", "prisma"],
+  "keywords": [
+    "gym",
+    "management",
+    "api",
+    "nodejs",
+    "prisma"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@prisma/client": "^6.11.1",
+    "@prisma/client": "^6.14.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
@@ -26,11 +32,11 @@
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "prisma": "^6.11.1",
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "prisma": "^6.14.0"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

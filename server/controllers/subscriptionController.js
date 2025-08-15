@@ -29,7 +29,23 @@ const getAllSubscriptions = asyncHandler(async (req, res) => {
         prisma.subscriptions.findMany({
             skip,
             take: limit,
-            orderBy: { id: 'desc' }
+            orderBy: { id: 'desc' },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        rollNumber: true
+                    }
+                },
+                plan: {
+                    select: {
+                        id: true,
+                        name: true,
+                        duration: true
+                    }
+                }
+            }
         }),
         prisma.subscriptions.count()
     ]);
@@ -40,19 +56,49 @@ const getAllSubscriptions = asyncHandler(async (req, res) => {
 // Create a new subscription
 const createSubscription = asyncHandler(async (req, res) => {
     const { userId, planId, startDate, endDate, paymentStatus } = req.body;
+    
+    // Log the incoming data for debugging
+    console.log('Creating subscription with data:', { userId, planId, startDate, endDate, paymentStatus });
+    
     if (!paymentStatus || typeof paymentStatus !== 'string') {
         return res.status(400).json({ error: 'paymentStatus is required and must be a string.' });
     }
-    const newSubscription = await prisma.subscriptions.create({
-        data: {
-            userId,
-            planId,
-            startDate: new Date(startDate),
-            endDate: new Date(endDate),
-            paymentStatus
-        }
+    
+    // Validate that user exists
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
     });
-    res.status(201).json(newSubscription);
+    
+    if (!user) {
+        return res.status(400).json({ error: 'User not found with the provided userId.' });
+    }
+    
+    // Validate that plan exists
+    const plan = await prisma.plan.findUnique({
+        where: { id: planId }
+    });
+    
+    if (!plan) {
+        return res.status(400).json({ error: 'Plan not found with the provided planId.' });
+    }
+    
+    try {
+        const newSubscription = await prisma.subscriptions.create({
+            data: {
+                userId,
+                planId,
+                startDate: new Date(startDate),
+                endDate: new Date(endDate),
+                paymentStatus
+            }
+        });
+        
+        console.log('Subscription created successfully:', newSubscription);
+        res.status(201).json(newSubscription);
+    } catch (error) {
+        console.error('Error creating subscription:', error);
+        res.status(500).json({ error: 'Failed to create subscription. Please try again.' });
+    }
 });
 
 // Get a subscription by ID

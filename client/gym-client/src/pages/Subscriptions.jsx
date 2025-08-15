@@ -57,13 +57,22 @@ const Subscriptions = () => {
   // Fetch members and plans for modal
   const fetchMembersAndPlans = async () => {
     try {
+      console.log('Fetching members and plans...');
       const [usersRes, plansRes] = await Promise.all([
         api.get("/users"),
         api.get("/plans"),
       ]);
+      
+      console.log('Users response:', usersRes.data);
+      console.log('Plans response:', plansRes.data);
+      
       setMembers(usersRes.data.users || []);
       setPlans(plansRes.data.plans || []);
-    } catch {
+      
+      console.log('Members set:', usersRes.data.users || []);
+      console.log('Plans set:', plansRes.data.plans || []);
+    } catch (error) {
+      console.error('Error fetching members or plans:', error);
       toast.error("Failed to load members or plans for subscription form.");
     }
   };
@@ -93,12 +102,19 @@ const Subscriptions = () => {
   const handleAddSubscriptionSubmit = async (data) => {
     setModalLoading(true);
     setModalError("");
+    
+    // Debug logging
+    console.log('Submitting subscription data:', data);
+    
     try {
-      await api.post("/subscriptions", data);
+      const response = await api.post("/subscriptions", data);
+      console.log('Subscription created successfully:', response.data);
       toast.success("Subscription added successfully!");
       handleCloseModal();
       fetchSubscriptions(page);
     } catch (err) {
+      console.error('Error creating subscription:', err);
+      console.error('Error response:', err.response);
       setModalError(
         err.response?.data?.error || "Failed to add subscription. Please try again."
       );
